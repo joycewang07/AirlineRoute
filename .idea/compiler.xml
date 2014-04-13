@@ -25,6 +25,9 @@
         <module name="AlgorithmFinal" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="AlgorithmFinal" target="1.6" />
+    </bytecodeTargetLevel>
   </component>
 </project>
 

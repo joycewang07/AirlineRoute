@@ -1,3 +1,11 @@
+var startNode;
+var endNode;
+var currentNode;
+var currentNodeIndex = 0;
+var path;
+var animationMove;
+var backendGrid;
+
 var initializeGraphic = function (scale, cellSize, renderTo) {
     var realCellSize = cellSize;
 
@@ -13,95 +21,8 @@ var initializeGraphic = function (scale, cellSize, renderTo) {
             cellSpan.addListener('click', onGridItemClick);
         }
     }
-}
-
-var onGridItemClick = function (evt, el, o) {
-    var cellId = el.getAttribute('id');
-    var startSelected = Ext.getCmp("start");
-    var endSelected = Ext.getCmp("end");
-    var obstacleSelected = Ext.getCmp("obstacle");
-
-    if (startSelected.getValue()) {
-        var x = cellId.split("_", 1)[0];
-        var pieces = cellId.split("_");
-        var y = pieces[pieces.length - 1];
-        startNode = new Node(x, y);
-    } else if (endSelected.getValue()) {
-        var x = cellId.split("_", 1)[0];
-        var pieces = cellId.split("_");
-        var y = pieces[pieces.length - 1];
-        endNode = new Node(x, y);
-    } else if (obstacleSelected.getValue()) {
-        // move.kill
-        var x = cellId.split("_", 1)[0];
-        var pieces = cellId.split("_");
-        var y = pieces[pieces.length - 1];
-        backendGrid[x][y].isWall = true;
-        var element = Ext.get(cellId);
-        element.setStyle("background-color", "#000000");
-        // stopMove;
-    }
-
-
-}
-var startNode;
-var endNode;
-var getNodeY = function (cellId) {
-
-    var pieces = cellId.split("_");
-    var idy = pieces[pieces.length - 1].get[0];
-
-    return idy;
-}
-
-var getNodeX = function (cellId) {
-
-    var idx = cellId.split("_", 1).get[0];
-    return idx;
-
-}
-var currentNode;
-var currentNodeIndex;
-var path;
-var animationMove;
-
-function move() {
-    if (currentNodeIndex < path.length) {
-        currentNode = path[currentNodeIndex];
-        var x = currentNode.x;
-        var y = currentNode.y;
-        var cellId = x + "_" + y;
-        var element = Ext.get(cellId);
-        element.setStyle("background-color", "#05C705");
-        currentNodeIndex++;
-    }
-    else {
-        clearInterval(animationMove);
-    }
-}
-
-var animatePath = function () {
-    //myVar=setInterval(function(){myTimer()},1000);
-    animationMove = setInterval(function () {move()}, 1000);
-}
-
-var stopMove = function myStopFunction() {
-    //clearInterval(myVar);
-}
-
-function Node(x, y) {
-
-
-    this.f = 0;
-    this.g = 0;
-    this.h = 0;
-    this.x = x;
-    this.y = y;
-    this.visited = false;
-    this.closed = false;
-    this.parent = null;
-    this.cost = 1;
-    this.isWall = false;
+    // initialize backend grid
+    backendGrid = initGrid(scale);
 }
 
 var initGrid = function (scale) {
@@ -109,12 +30,65 @@ var initGrid = function (scale) {
     for (var x = 0; x < scale; x++) {
         grid[x] = new Array(scale);
         for (var y = 0; y < scale; y++) {
-            grid[x][y] = new Node(x, y);
+            grid[x][y] = new Cell(x, y);
         }
     }
     return grid;
 }
-var backendGrid = initGrid(30);
+
+var onGridItemClick = function (evt, el, o) {
+    var cellId = el.getAttribute('id');
+    var startSelected = Ext.getCmp("start");
+    var endSelected = Ext.getCmp("end");
+    var obstacleSelected = Ext.getCmp("obstacle");
+    var pieces = cellId.split("_");
+    var x = parseInt(pieces[0]);
+    var y = parseInt(pieces[1]);
+    if (startSelected.getValue()) {
+        startNode = new Cell(x, y);
+        Ext.get(cellId).setStyle("background-color", "#000000");
+    } else if (endSelected.getValue()) {
+        endNode = new Cell(x, y);
+        Ext.get(cellId).setStyle("background-color", "#000000");
+    } else if (obstacleSelected.getValue()) {
+        backendGrid[x][y].isWall = true;
+        Ext.get(cellId).setStyle("background-color", "#000000");
+    }
+}
+
+
+function move() {
+    if (currentNodeIndex < path.length) {
+        currentNode = path[currentNodeIndex];
+        Ext.get(currentNode.x + "_" + currentNode.y).setStyle("background-color", "#05C705");
+        currentNodeIndex++;
+    } else {
+        window.clearInterval(animationMove);
+    }
+}
+
+var animatePath = function () {
+    path = astarSearch(backendGrid, startNode, endNode);
+    animationMove = window.setInterval(function () {move()}, 1000);
+}
+
+var stopMove = function myStopFunction() {
+    //window.clearInterval(myVar);
+}
+
+function Cell(x, y) {
+    this.x = x;
+    this.y = y;
+    this.f = 0;
+    this.g = 0;
+    this.h = 0;
+    this.visited = false;
+    this.closed = false;
+    this.parent = null;
+    this.cost = 1;
+    this.isWall = false;
+}
+
 var neighbours = function (grid, node) {
     var ret = [];
     var x = node.x;
@@ -169,7 +143,6 @@ var astarSearch = function (grid, start, end) {
         var currentNode = openHeap.pop();
         // End case -- result has been found, return the traced path.
         if (currentNode.x == end.x && currentNode.y == end.y) {
-            // /if (currentNode === end) {
             var curr = currentNode;
             var ret = [];
             while (curr.parent) {

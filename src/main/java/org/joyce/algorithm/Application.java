@@ -3,6 +3,7 @@ package org.joyce.algorithm;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 @EnableAutoConfiguration
 @ComponentScan
+@PropertySource("application.properties")
 public class Application extends WebMvcConfigurerAdapter {
     public static void main(String[] args) {
         new SpringApplicationBuilder(Application.class).run();

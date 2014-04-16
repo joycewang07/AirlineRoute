@@ -117,7 +117,7 @@
                                   name : 'setObstacle',
                                   id :'setObstacle',
                                   handler: function(){
-                                      astarSearch(backendGrid,startNode, endNode);
+                                      astarSearch(backendGrid, startNode, endNode);
                                       //move(startNode);
                                   }
                               },
@@ -127,7 +127,7 @@
                                   name : 'go',
                                   id :'go',
                                   handler: function(){
-                                      path = astarSearch(backendGrid, startNode, endNode);
+
                                       animatePath();
                                   }
                               }
@@ -148,20 +148,8 @@
             initComponent();
             initializeGraphic(30, 30, 'gridDiv');
 
-            //var n = neighbours(testGrid, {x: 23, y: 13});
-            //var openHeap = new BinaryHeap(function (node){return node.f});
-            //var m = manhattan({x: 2, y: 1}, {x: 23, y: 20});
-          //  console.log(m);
-//            var start = onGridItemClick();
-//            var startIdx = getNodeX(start);
-//            var startIdy = getNodeY(start);
-//            var end = onGridItemClick();
-//            var endIdx = getNodeX(end);
-//            var endIdy = getNodeY(end);
-           var test = astarSearch(backendGrid,new Node(2,2), new Node(23,23));
-//            var testsplit = "6_90" ;
-//            var first = testsplit.split("_",1);
-//            console.log(first);
+            //var test = astarSearch(backendGrid, new Cell(0,0), new Cell(29,29));
+            //console.log(test);
         });
 
 

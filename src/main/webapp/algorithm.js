@@ -5,6 +5,7 @@ var currentNodeIndex = 0;
 var path;
 var animationMove;
 var backendGrid;
+var isMoving = false;
 
 var initializeGraphic = function (scale, cellSize, renderTo) {
     var realCellSize = cellSize;
@@ -46,11 +47,17 @@ var onGridItemClick = function (evt, el, o) {
     var y = parseInt(pieces[1]);
     if (startSelected.getValue()) {
         startNode = new Cell(x, y);
-        Ext.get(cellId).setStyle("background-color", "#000000");
+        currentNode = startNode;
+        Ext.get(cellId).setStyle("background-color", "#000555");
     } else if (endSelected.getValue()) {
         endNode = new Cell(x, y);
-        Ext.get(cellId).setStyle("background-color", "#000000");
+        Ext.get(cellId).setStyle("background-color", "#FF0000");
     } else if (obstacleSelected.getValue()) {
+       if(isMoving){
+           window.clearInterval(animationMove);
+           currentNodeIndex = 0;
+           animatePath();
+       }
         backendGrid[x][y].isWall = true;
         Ext.get(cellId).setStyle("background-color", "#000000");
     }
@@ -59,16 +66,18 @@ var onGridItemClick = function (evt, el, o) {
 
 function move() {
     if (currentNodeIndex < path.length) {
+        isMoving = true;
         currentNode = path[currentNodeIndex];
         Ext.get(currentNode.x + "_" + currentNode.y).setStyle("background-color", "#05C705");
         currentNodeIndex++;
     } else {
         window.clearInterval(animationMove);
+        isMoving = false;
     }
 }
 
 var animatePath = function () {
-    path = astarSearch(backendGrid, startNode, endNode);
+    path = astarSearch(backendGrid, currentNode, endNode);
     animationMove = window.setInterval(function () {move()}, 1000);
 }
 

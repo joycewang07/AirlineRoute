@@ -63,6 +63,7 @@
             var mainPanel = Ext.create('Ext.panel.Panel', {
                 id: 'mainPanel',
                 title: 'Graphic',
+                cls: 'panelBackground',
                 html: '<div id="gridDiv"></div>',
                 region: 'center',
                 width: '70%',
@@ -117,9 +118,7 @@
                                   name : 'setObstacle',
                                   id :'setObstacle',
                                   handler: function(){
-
-
-                                      //move(startNode);
+                                   //move(startNode);
                                   }
                               },
                               {
@@ -128,7 +127,6 @@
                                   name : 'go',
                                   id :'go',
                                   handler: function(){
-
                                       animatePath();
                                   }
                               }
@@ -143,11 +141,17 @@
                 items: [topBar, mainPanel, controlPanel],
                 renderTo: Ext.getBody()
             });
+
+//            var image = Ext.create('Ext.Img', {
+//                src: 'earth.jpg',
+//                autoScroll: true,
+//                renderTo: Ext.getDom("gridDiv")
+//            });
         }
 
         Ext.onReady(function () {
             initComponent();
-            initializeGraphic(30, 30, 'gridDiv');
+            initializeGraphic(100, 10, 'gridDiv');
 
             //var test = astarSearch(backendGrid, new Cell(0,0), new Cell(29,29));
             //console.log(test);

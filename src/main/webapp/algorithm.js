@@ -23,15 +23,36 @@ var initializeGraphic = function (scale, cellSize, renderTo) {
         }
     }
     // initialize backend grid
-    backendGrid = initGrid(scale);
+    backendGrid = createGrid(scale);
 }
 
-var initGrid = function (scale) {
+var createGrid = function (scale) {
     var grid = new Array(scale);
     for (var x = 0; x < scale; x++) {
         grid[x] = new Array(scale);
         for (var y = 0; y < scale; y++) {
             grid[x][y] = new Cell(x, y);
+        }
+    }
+    return grid;
+}
+
+var initGrid = function (grid, clearWall) {
+    var scale = grid.length;
+    for (var x = 0; x < scale; x++) {
+
+        for (var y = 0; y < scale; y++) {
+            grid[x][y].f = 0;
+            grid[x][y].g = 0;
+            grid[x][y].h = 0;
+            grid[x][y].visited = false;
+            grid[x][y].closed = false;
+            grid[x][y].parent = null;
+            grid[x][y].cost = 1;
+            if(clearWall){
+                grid[x][y].isWall = false;
+            }
+
         }
     }
     return grid;
@@ -48,7 +69,7 @@ var onGridItemClick = function (evt, el, o) {
     if (startSelected.getValue()) {
         startNode = new Cell(x, y);
         currentNode = startNode;
-        Ext.get(cellId).setStyle("background-color", "#000555");
+        Ext.get(cellId).setStyle("background-color", "#000C63");
     } else if (endSelected.getValue()) {
         endNode = new Cell(x, y);
         Ext.get(cellId).setStyle("background-color", "#FF0000");
@@ -56,9 +77,12 @@ var onGridItemClick = function (evt, el, o) {
        if(isMoving){
            window.clearInterval(animationMove);
            currentNodeIndex = 0;
+           initGrid(backendGrid, false);
+           backendGrid[x][y].isWall = true;
            animatePath();
+       } else {
+           backendGrid[x][y].isWall = true;
        }
-        backendGrid[x][y].isWall = true;
         Ext.get(cellId).setStyle("background-color", "#000000");
     }
 }
@@ -77,7 +101,7 @@ function move() {
 }
 
 var animatePath = function () {
-    path = astarSearch(backendGrid, currentNode, endNode);
+    path = astarSearch(backendGrid, new Cell(currentNode.x, currentNode.y), new Cell(endNode.x, endNode.y));
     animationMove = window.setInterval(function () {move()}, 1000);
 }
 

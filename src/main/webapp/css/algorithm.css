@@ -1,0 +1,20 @@
+.grid_item {
+    display: block;
+    /*border: 0.1px solid #bbb;*/
+    float: left;
+    line-height:12px;
+    font-size:10px;
+}
+
+#gridDiv {
+    MARGIN-RIGHT: auto;
+    MARGIN-LEFT: auto;
+    text-align:center;
+    background-image:url('/images/earth.jpg');
+    background-size:1200px 1200px;
+    background-repeat:no-repeat;
+}
+
+.grid_item.wall {
+    background-color: #000000;
+}

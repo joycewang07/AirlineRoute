@@ -76,61 +76,60 @@
                 title: 'Control',
                 id: "rightPanel",
                 layout: 'vbox',
-                width: '30%',
+                width: '10%',
                 region: 'east',
-                items:[
-                      {
+                split: true,
+                items:[ {
                           xtype      : 'fieldcontainer',
-                          fieldLabel : 'Menu',
-                          defaultType: 'radiofield',
-                          defaults: {
-                              flex: 2
-                          },
                           layout: 'vbox',
                           items: [
                               {
+                                  xtype: 'radiofield',
                                   boxLabel  : 'Start',
                                   name      : 'Menu',
                                   inputValue: 'Start',
-                                  id        : 'start',
-                                  handler: function(){
-//
-                                  }
+                                  id        : 'start'
                               }, {
+                                  xtype: 'radiofield',
                                   boxLabel  : 'End',
                                   name      : 'Menu',
                                   inputValue: 'End',
-                                  id        : 'end',
-                                  handler: function(){
-
-                                  }
+                                  id        : 'end'
                               }, {
+                                  xtype: 'radiofield',
                                   boxLabel  : 'Obstacle',
                                   name      : 'Menu',
                                   inputValue: 'Obstacle',
                                   id        : 'obstacle'
-                              },
-                              {
-                                  xtype: 'button',
-                                  text: 'Set Obstacle',
-                                  name : 'setObstacle',
-                                  id :'setObstacle',
-                                  handler: function(){
-                                   //move(startNode);
-                                  }
-                              },
-                              {
-                                  xtype: 'button',
-                                  text: 'Go',
-                                  name : 'go',
-                                  id :'go',
-                                  handler: function(){
-                                      animatePath();
-                                  }
+                              }, {
+                                  xtype: 'radiofield',
+                                  boxLabel  : 'Cloud',
+                                  name      : 'Menu',
+                                  inputValue: 'Cloud',
+                                  id        : 'cloud'
                               }
                           ]
-
-                    }]
+                    }, {
+                        xtype: 'button',
+                        text: 'Go',
+                        name : 'go',
+                        id :'go',
+                        width:150,
+                        height: 35,
+                        handler: function() {
+                            animatePath();
+                        }
+                    }, {
+                    xtype: 'button',
+                    text: 'Clear all',
+                    name : 'clearAll',
+                    id :'clearAll',
+                    width:150,
+                    height: 35,
+                    handler: function() {
+                        clearAll();
+                    }
+                }]
 
             });
 
@@ -139,12 +138,6 @@
                 items: [topBar, mainPanel, controlPanel],
                 renderTo: Ext.getBody()
             });
-
-//            var image = Ext.create('Ext.Img', {
-//                src: 'earth.jpg',
-//                autoScroll: true,
-//                renderTo: Ext.getDom("gridDiv")
-//            });
         }
 
         Ext.onReady(function () {

@@ -44,14 +44,12 @@ var astar = {
         diagonal = !!diagonal;
 
         var openHeap = astar.heap();
-
         openHeap.push(start);
 
         while(openHeap.size() > 0) {
 
             // Grab the lowest f(x) to process next.  Heap keeps this sorted for us.
             var currentNode = openHeap.pop();
-
             // End case -- result has been found, return the traced path.
             if(currentNode === end) {
                 var curr = currentNode;
@@ -83,7 +81,6 @@ var astar = {
                 var beenVisited = neighbor.visited;
 
                 if(!beenVisited || gScore < neighbor.g) {
-
                     // Found an optimal (so far) path to this node.  Take score for node to see how good it is.
                     neighbor.visited = true;
                     neighbor.parent = currentNode;
@@ -94,8 +91,7 @@ var astar = {
                     if (!beenVisited) {
                         // Pushing to heap will put it in proper place based on the 'f' value.
                         openHeap.push(neighbor);
-                    }
-                    else {
+                    } else {
                         // Already seen the node, but since it has been rescored we need to reorder it in the heap
                         openHeap.rescoreElement(neighbor);
                     }

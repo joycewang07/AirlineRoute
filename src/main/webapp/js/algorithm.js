@@ -7,10 +7,11 @@ var animationMove;
 var backendGrid;
 var isMoving = false;
 var mouseDown = false;
+var graphicScale = 0;
 
 var initializeGraphic = function (scale, cellSize, renderTo) {
+    graphicScale = scale;
     var realCellSize = cellSize;
-
     var rootDiv = Ext.DomHelper.append(renderTo, {tag: 'div', cls: 'grid_root', id: 'rootCell',
         style: 'width: ' + (cellSize * scale) + 'px; height: ' + (cellSize * scale ) + 'px'}, true);
 
@@ -41,7 +42,7 @@ var createGrid = function (scale) {
     return grid;
 }
 
-var initGrid = function (grid, clearWall) {
+var initGrid = function (grid, clearWall, clearCost) {
     var scale = grid.length;
     for (var x = 0; x < scale; x++) {
 
@@ -52,7 +53,9 @@ var initGrid = function (grid, clearWall) {
             grid[x][y].visited = false;
             grid[x][y].closed = false;
             grid[x][y].parent = null;
-            grid[x][y].cost = 1;
+            if (clearCost) {
+                grid[x][y].cost = 1;
+            }
             if(clearWall) {
                 grid[x][y].isWall = false;
             }
@@ -132,21 +135,39 @@ var onGridItemMouseDown = function (evt, el, o) {
 var onGridItemMouseOver = function (evt, el, o) {
     if (mouseDown == true) {
         var obstacleSelected = Ext.getCmp("obstacle");
+        var cloudSelected = Ext.getCmp("cloud");
         if (obstacleSelected.getValue()) {
             var cellId = el.getAttribute('id');
             var pieces = cellId.split("_");
             var x = parseInt(pieces[0]);
             var y = parseInt(pieces[1]);
+            Ext.get(cellId).setStyle("background-color", "#000000");
             if(isMoving){
                 window.clearInterval(animationMove);
                 currentNodeIndex = 0;
-                initGrid(backendGrid, false);
+                initGrid(backendGrid, false, false);
                 backendGrid[x][y].isWall = true;
                 animatePath();
             } else {
                 backendGrid[x][y].isWall = true;
             }
-            Ext.get(cellId).setStyle("background-color", "#000000");
+        } else if (cloudSelected.getValue) {
+            var cellId = el.getAttribute('id');
+            var pieces = cellId.split("_");
+            var x = parseInt(pieces[0]);
+            var y = parseInt(pieces[1]);
+            Ext.get(cellId).setStyle("background-color", "#FFFFFF");
+            var randomNum = Math.random() / 2 + 0.5;
+            Ext.get(cellId).setStyle("opacity", randomNum);
+            if(isMoving){
+                window.clearInterval(animationMove);
+                currentNodeIndex = 0;
+                initGrid(backendGrid, false, false);
+                backendGrid[x][y].cost = randomNum * 10;
+                animatePath();
+            } else {
+                backendGrid[x][y].cost = randomNum * 10;
+            }
         }
     }
 }
@@ -169,8 +190,18 @@ var animatePath = function () {
     animationMove = window.setInterval(function () {move()}, 1000);
 }
 
-var stopMove = function myStopFunction() {
-    //window.clearInterval(myVar);
+function clearAll () {
+    for (var x = 0; x < graphicScale; x++) {
+        for (var y = 0; y < graphicScale; y++) {
+            Ext.get(x + '_' + y).setStyle("background-color", "");
+            Ext.get(x + '_' + y).setStyle("opacity", "");
+        }
+    }
+
+    initGrid(backendGrid, true, true);
+    isMoving = false;
+    window.clearInterval(animationMove);
+    currentNodeIndex = 0;
 }
 
 function Cell(x, y) {
